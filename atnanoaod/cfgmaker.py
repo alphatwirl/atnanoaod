@@ -4,7 +4,12 @@
 import collections
 import logging
 
-import ROOT
+try:
+    ## https://root-forum.cern.ch/t/pyroot-hijacks-help/15207
+    import ROOT
+    ROOT.PyConfig.IgnoreCommandLineOptions = True
+except ImportError:
+    pass
 
 ##__________________________________________________________________||
 EventBuilderConfig = collections.namedtuple(
