@@ -25,7 +25,7 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
         parallel_mode='multiprocessing'
     )
     parallel.begin()
-    
+
     for i in tbl_dataset_cmsdataset.index:
         row = tbl_dataset_cmsdataset.loc[[i]]
         dataset = row.dataset.iloc[0]
@@ -39,12 +39,11 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
     parallel.end()
 
     return results
-    
+
 ##__________________________________________________________________||
 def mk_dataset_files_list(dataset, cmsdataset):
     files = query_files_for(cmsdataset)
+    files = ['root://cms-xrd-global.cern.ch/{}'.format(f) for f in files]
     return Dataset(name=dataset, files=files)
 
 ##__________________________________________________________________||
-
-
