@@ -43,5 +43,53 @@ class AtNanoAOD(object):
             user_modules=user_modules,
             htcondor_job_desc_extra=htcondor_job_desc_extra
         )
+        self.outdir = outdir
+        self.force =  force
+        self.max_events_per_dataset = max_events_per_dataset
+        self.max_events_per_process = max_events_per_process
+        self.profile = profile
+        self.profile_out_path = profile_out_path
+        self.parallel_mode = parallel_mode
+
+    def run(self, datasets, reader_collector_pairs):
+        self.parallel.begin()
+        try:
+            loop = self._configure(datasets, reader_collector_pairs)
+            self._run(loop)
+        except KeyboardInterrupt:
+            logger = logging.getLogger(__name__)
+            logger.warning('received KeyboardInterrupt')
+            if query_yes_no('terminate running jobs'):
+               logger.warning('terminating running jobs')
+               self.parallel.terminate()
+            else:
+               logger.warning('not terminating running jobs')
+        self.parallel.end()
+
+    def _configure(self, datasets, reader_collector_pairs):
+
+        dataset_readers = alphatwirl.datasetloop.DatasetReaderComposite()
+
+        if self.parallel_mode in ('subprocess', 'htcondor'):
+            loop = alphatwirl.datasetloop.ResumableDatasetLoop(
+                datasets=datasets, reader=dataset_readers,
+                workingarea=self.parallel.workingarea
+            )
+        else:
+            loop = alphatwirl.datasetloop.DatasetLoop(
+                datasets=datasets,
+                reader=dataset_readers
+            )
+
+        return loop
+
+    def _run(self, loop):
+        if not self.profile:
+            loop()
+        else:
+            alphatwirl.misc.print_profile_func(
+               func=loop,
+               profile_out_path=self.profile_out_path
+            )
 
 ##__________________________________________________________________||
