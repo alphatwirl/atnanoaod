@@ -6,7 +6,7 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install pandas
-  - pip install git+git@github.com:alphatwirl/alphatwirl.git
+  - pip install git+git://github.com:alphatwirl/alphatwirl.git
   - pip install pytest
   - pip install codecov
   - pip install pytest-cov
