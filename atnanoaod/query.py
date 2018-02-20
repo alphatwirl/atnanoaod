@@ -44,8 +44,10 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
     return results
 
 ##__________________________________________________________________||
-def mk_dataset_files_list(dataset, cmsdataset):
-    files = query_files_for(cmsdataset)
+def mk_dataset_files_list(dataset, cmsdatasets):
+    files =  [ ]
+    for s in cmsdatasets:
+        files += query_files_for(s)
     files = ['root://cms-xrd-global.cern.ch/{}'.format(f) for f in files]
     return Dataset(name=dataset, files=files)
 
