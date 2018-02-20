@@ -1,0 +1,4 @@
+dataset           cmsdataset
+QCD_HT500to700    /QCD_HT500to700_13TeV/05Feb2018_ext1-v1/NANOAODSIM
+QCD_HT500to700    /QCD_HT500to700_13TeV/05Feb2018_ext1-v2/NANOAODSIM
+TTJets            /TTJets_13TeV/05Feb2018_v2-v1/NANOAODSIM
