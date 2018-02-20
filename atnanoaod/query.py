@@ -1,6 +1,7 @@
 # Tai Sakuma <tai.sakuma@cern.ch>
 import subprocess
 import logging
+import collections
 
 import pandas as pd
 
@@ -31,11 +32,16 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
     )
     parallel.begin()
 
+    dataset_dict = collections.OrderedDict()
+
     for dataset in tbl_dataset_cmsdataset.index.unique():
         row = tbl_dataset_cmsdataset.loc[[dataset]]
         if datasets is not None and dataset not in datasets:
             continue
         cmsdatasets = row.cmsdataset.loc[[dataset]].tolist()
+        dataset_dict[dataset] = cmsdatasets
+
+    for dataset, cmsdatasets in dataset_dict.items():
         parallel.communicationChannel.put(mk_dataset_files_list, dataset, cmsdatasets)
 
     results = parallel.communicationChannel.receive()
