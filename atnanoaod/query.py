@@ -13,6 +13,31 @@ from .dasquery import query_files_for
 from .dataset import Dataset
 
 ##__________________________________________________________________||
+def build_datasets(dataset_dict, datasets=None):
+
+    parallel = alphatwirl.parallel.build_parallel(
+        parallel_mode='multiprocessing'
+    )
+    parallel.begin()
+
+    for dataset, cmsdatasets in dataset_dict.items():
+        parallel.communicationChannel.put(mk_dataset_files_list, dataset, cmsdatasets)
+
+    results = parallel.communicationChannel.receive()
+
+    parallel.end()
+
+    return results
+
+##__________________________________________________________________||
+def mk_dataset_files_list(dataset, cmsdatasets):
+    files =  [ ]
+    for s in cmsdatasets:
+        files += query_files_for(s)
+    files = ['root://cms-xrd-global.cern.ch/{}'.format(f) for f in files]
+    return Dataset(name=dataset, files=files)
+
+##__________________________________________________________________||
 def build_datasets_from_tbl(tbl_dataset_cmsdataset, datasets=None):
 
     try:
@@ -37,29 +62,5 @@ def build_datasets_from_tbl(tbl_dataset_cmsdataset, datasets=None):
         dataset_dict[dataset] = cmsdatasets
 
     return build_datasets(dataset_dict, datasets)
-
-def build_datasets(dataset_dict, datasets=None):
-
-    parallel = alphatwirl.parallel.build_parallel(
-        parallel_mode='multiprocessing'
-    )
-    parallel.begin()
-
-    for dataset, cmsdatasets in dataset_dict.items():
-        parallel.communicationChannel.put(mk_dataset_files_list, dataset, cmsdatasets)
-
-    results = parallel.communicationChannel.receive()
-
-    parallel.end()
-
-    return results
-
-##__________________________________________________________________||
-def mk_dataset_files_list(dataset, cmsdatasets):
-    files =  [ ]
-    for s in cmsdatasets:
-        files += query_files_for(s)
-    files = ['root://cms-xrd-global.cern.ch/{}'.format(f) for f in files]
-    return Dataset(name=dataset, files=files)
 
 ##__________________________________________________________________||
