@@ -19,7 +19,8 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
         tbl_dataset_cmsdataset = pd.read_table(
             tbl_dataset_cmsdataset,
             delim_whitespace=True,
-            index_col='dataset'
+            index_col='dataset',
+            comment='#',
         )
     except ValueError:
         # otherwise, assume tbl_dataset_cmsdataset is a tbl itself
