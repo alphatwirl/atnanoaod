@@ -45,9 +45,9 @@ def mock_mk_dataset_files_list(monkeypatch, mock_alphatwirl):
     monkeypatch.setattr(module, 'mk_dataset_files_list', ret)
     return ret
 
-def test_build_datasets(tbl_cmsdatasets, mock_mk_dataset_files_list):
+def test_build_datasets_from_tbl(tbl_cmsdatasets, mock_mk_dataset_files_list):
 
-    atnanoaod.query.build_datasets(
+    atnanoaod.query.build_datasets_from_tbl(
         tbl_dataset_cmsdataset=tbl_cmsdatasets
     )
     expected = [
