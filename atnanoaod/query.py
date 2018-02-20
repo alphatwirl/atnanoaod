@@ -16,7 +16,11 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
 
     try:
         # assume tbl_dataset_cmsdataset is a path to a tbl
-        tbl_dataset_cmsdataset = pd.read_table(tbl_dataset_cmsdataset, delim_whitespace=True)
+        tbl_dataset_cmsdataset = pd.read_table(
+            tbl_dataset_cmsdataset,
+            delim_whitespace=True,
+            index_col='dataset'
+        )
     except ValueError:
         # otherwise, assume tbl_dataset_cmsdataset is a tbl itself
         pass
@@ -26,13 +30,12 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
     )
     parallel.begin()
 
-    for i in tbl_dataset_cmsdataset.index:
-        row = tbl_dataset_cmsdataset.loc[[i]]
-        dataset = row.dataset.iloc[0]
+    for dataset in tbl_dataset_cmsdataset.index.unique():
+        row = tbl_dataset_cmsdataset.loc[[dataset]]
         if datasets is not None and dataset not in datasets:
             continue
-        cmsdataset = row.cmsdataset.iloc[0]
-        parallel.communicationChannel.put(mk_dataset_files_list, dataset, cmsdataset)
+        cmsdatasets = row.cmsdataset.loc[[dataset]].tolist()
+        parallel.communicationChannel.put(mk_dataset_files_list, dataset, cmsdatasets)
 
     results = parallel.communicationChannel.receive()
 
