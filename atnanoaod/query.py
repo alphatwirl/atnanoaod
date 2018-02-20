@@ -27,11 +27,6 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
         # otherwise, assume tbl_dataset_cmsdataset is a tbl itself
         pass
 
-    parallel = alphatwirl.parallel.build_parallel(
-        parallel_mode='multiprocessing'
-    )
-    parallel.begin()
-
     dataset_dict = collections.OrderedDict()
 
     for dataset in tbl_dataset_cmsdataset.index.unique():
@@ -40,6 +35,15 @@ def build_datasets(tbl_dataset_cmsdataset, datasets=None):
             continue
         cmsdatasets = row.cmsdataset.loc[[dataset]].tolist()
         dataset_dict[dataset] = cmsdatasets
+
+    return build_datasets_(dataset_dict, datasets)
+
+def build_datasets_(dataset_dict, datasets=None):
+
+    parallel = alphatwirl.parallel.build_parallel(
+        parallel_mode='multiprocessing'
+    )
+    parallel.begin()
 
     for dataset, cmsdatasets in dataset_dict.items():
         parallel.communicationChannel.put(mk_dataset_files_list, dataset, cmsdatasets)
