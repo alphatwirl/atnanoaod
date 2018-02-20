@@ -13,7 +13,7 @@ from .dasquery import query_files_for
 from .dataset import Dataset
 
 ##__________________________________________________________________||
-def build_datasets(dataset_dict, datasets=None):
+def build_datasets(dataset_dict):
 
     parallel = alphatwirl.parallel.build_parallel(
         parallel_mode='multiprocessing'
@@ -61,6 +61,6 @@ def build_datasets_from_tbl(tbl_dataset_cmsdataset, datasets=None):
         cmsdatasets = row.cmsdataset.loc[[dataset]].tolist()
         dataset_dict[dataset] = cmsdatasets
 
-    return build_datasets(dataset_dict, datasets)
+    return build_datasets(dataset_dict)
 
 ##__________________________________________________________________||

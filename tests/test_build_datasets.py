@@ -2,6 +2,7 @@
 import os
 import sys
 import collections
+
 import pytest
 
 try:
@@ -40,9 +41,9 @@ def mock_mk_dataset_files_list(monkeypatch, mock_alphatwirl):
     monkeypatch.setattr(module, 'mk_dataset_files_list', ret)
     return ret
 
-def test_build_datasets(mock_mk_dataset_files_list):
-
-    dataset_dict = collections.OrderedDict([
+@pytest.fixture()
+def dataset_dict_01():
+    return collections.OrderedDict([
         ('QCD_HT200to300', ['/QCD_HT200to300_13TeV/05Feb2018-v1/NANOAODSIM']),
         ('QCD_HT500to700', [
             '/QCD_HT500to700_13TeV/05Feb2018-v1/NANOAODSIM',
@@ -57,7 +58,9 @@ def test_build_datasets(mock_mk_dataset_files_list):
         ])
     ])
 
-    atnanoaod.query.build_datasets(dataset_dict=dataset_dict)
+def test_build_datasets(dataset_dict_01, mock_mk_dataset_files_list):
+
+    atnanoaod.query.build_datasets(dataset_dict=dataset_dict_01)
 
     expected = [
         mock.call('QCD_HT200to300', ['/QCD_HT200to300_13TeV/05Feb2018-v1/NANOAODSIM']),
@@ -67,6 +70,28 @@ def test_build_datasets(mock_mk_dataset_files_list):
         mock.call('QCD_HT1500to2000', ['/QCD_HT1500to2000_13TeV/05Feb2018_ext1-v1/NANOAODSIM']),
         mock.call('QCD_HT2000toInf', ['/QCD_HT2000toInf_13TeV/05Feb2018-v1/NANOAODSIM', '/QCD_HT2000toInf_13TeV/05Feb2018_ext1-v1/NANOAODSIM'])
     ]
+    assert expected == mock_mk_dataset_files_list.call_args_list
+
+def test_build_datasets_empty_dataset(dataset_dict_01, mock_mk_dataset_files_list):
+
+    dataset_dict_01['QCD_HT1000to1500'] = [ ]
+    atnanoaod.query.build_datasets(dataset_dict=dataset_dict_01)
+
+    expected = [
+        mock.call('QCD_HT200to300', ['/QCD_HT200to300_13TeV/05Feb2018-v1/NANOAODSIM']),
+        mock.call('QCD_HT500to700', ['/QCD_HT500to700_13TeV/05Feb2018-v1/NANOAODSIM', '/QCD_HT500to700_13TeV/05Feb2018_ext1-v1/NANOAODSIM']),
+        mock.call('QCD_HT700to1000', ['/QCD_HT700to1000_13TeV/05Feb2018_ext1-v1/NANOAODSIM']),
+        mock.call('QCD_HT1000to1500', [ ]),
+        mock.call('QCD_HT1500to2000', ['/QCD_HT1500to2000_13TeV/05Feb2018_ext1-v1/NANOAODSIM']),
+        mock.call('QCD_HT2000toInf', ['/QCD_HT2000toInf_13TeV/05Feb2018-v1/NANOAODSIM', '/QCD_HT2000toInf_13TeV/05Feb2018_ext1-v1/NANOAODSIM'])
+    ]
+    assert expected == mock_mk_dataset_files_list.call_args_list
+
+def test_build_datasets_empty_dict(mock_mk_dataset_files_list):
+
+    atnanoaod.query.build_datasets(dataset_dict={})
+
+    expected = [ ]
     assert expected == mock_mk_dataset_files_list.call_args_list
 
 ##__________________________________________________________________||
