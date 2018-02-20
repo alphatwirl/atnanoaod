@@ -9,7 +9,6 @@ except ImportError:
     import mock
 
 import atnanoaod
-import alphatwirl
 
 ##__________________________________________________________________||
 @pytest.fixture()
