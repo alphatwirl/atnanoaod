@@ -16,6 +16,15 @@ def query_files_for(cmsdataset):
         shell=True
     )
     stdout, stderr = proc.communicate()
-    return stdout.strip().split('\n')
+    if not proc.returncode == 0:
+        logger.error('error in executing: {}'.format(command))
+        if stderr:
+            logger.error(stderr)
+        return [ ]
+
+    if stderr:
+        logger.warning(stderr)
+
+    return stdout.strip().split()
 
 ##__________________________________________________________________||
