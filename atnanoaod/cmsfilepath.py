@@ -2,7 +2,11 @@
 import subprocess
 import logging
 
-import ROOT
+has_ROOT = True
+try:
+    import ROOT
+except ImportError:
+    has_ROOT = False
 
 logger = logging.getLogger(__name__)
 
@@ -13,11 +17,11 @@ def convert_lfn_to_pfn_or_aaa(path):
     pfn = subprocess.check_output(['edmFileUtil', '-d', path]).strip()
     f = ROOT.TFile.Open(pfn)
     if not IsROOTNullPointer(f) and f.IsOpen():
-        logger.info('successfully opened local file: {}'.format(pfn))
+        logger.debug('successfully opened local file: {}'.format(pfn))
         return pfn
 
     aaa = 'root://cms-xrd-global.cern.ch/{}'.format(path)
-    logger.info('cannot open local file. will use AAA: {}'.format(aaa))
+    logger.debug('cannot open local file. will use AAA: {}'.format(aaa))
     return aaa
 
 ##__________________________________________________________________||
