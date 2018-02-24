@@ -36,7 +36,6 @@ def mk_dataset_files_list(dataset, cmsdatasets):
     files =  [ ]
     for s in cmsdatasets:
         files += query_files_for(s)
-    files = [convert_lfn_to_pfn_or_aaa(f) for f in files]
     return Dataset(name=dataset, files=files)
 
 ##__________________________________________________________________||

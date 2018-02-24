@@ -11,6 +11,8 @@ try:
 except ImportError:
     pass
 
+from .cmsfilepath import convert_lfn_to_pfn_or_aaa
+
 ##__________________________________________________________________||
 EventBuilderConfig = collections.namedtuple(
     'EventBuilderConfig',
@@ -40,6 +42,7 @@ class EventBuilderConfigMaker(object):
 
     def nevents_in_file(self, path):
         try:
+            path = convert_lfn_to_pfn_or_aaa(path)
             file = ROOT.TFile.Open(path)
             tree = file.Get(self.treeName)
             return tree.GetEntriesFast()
