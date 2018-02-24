@@ -20,7 +20,6 @@ class EventBuilder(object):
         chain = ROOT.TChain(self.config.treeName)
         for path in self.config.inputPaths:
             path = convert_lfn_to_pfn_or_aaa(path)
-            print path
             chain.Add(path)
         events = BEvents(chain, self.config.maxEvents, self.config.start)
         events.config = self.config
