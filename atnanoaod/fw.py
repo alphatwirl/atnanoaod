@@ -13,6 +13,7 @@ except:
 import alphatwirl
 
 from .cfgmaker import EventBuilderConfigMaker
+from .eventbuilder import EventBuilder
 from .yes_no import query_yes_no
 
 ##__________________________________________________________________||
@@ -84,7 +85,7 @@ class AtNanoAOD(object):
         eventLoopRunner = alphatwirl.loop.MPEventLoopRunner(self.parallel.communicationChannel)
         eventBuilderConfigMaker = EventBuilderConfigMaker()
         datasetIntoEventBuildersSplitter = alphatwirl.loop.DatasetIntoEventBuildersSplitter(
-            EventBuilder=alphatwirl.roottree.BEventBuilder,
+            EventBuilder=EventBuilder,
             eventBuilderConfigMaker=eventBuilderConfigMaker,
             maxEvents=self.max_events_per_dataset,
             maxEventsPerRun=self.max_events_per_process,
