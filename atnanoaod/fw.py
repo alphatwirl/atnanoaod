@@ -11,6 +11,7 @@ except:
    import pickle
 
 import alphatwirl
+from alphatwirl.misc.deprecation import _deprecated_class_method_option
 
 from .cfgmaker import EventBuilderConfigMaker
 from .eventbuilder import EventBuilder
@@ -33,6 +34,7 @@ class AtNanoAOD(object):
                  force=False, quiet=False,
                  parallel_mode='multiprocessing',
                  htcondor_job_desc_extra=[ ],
+                 dispatcher_options=dict(),
                  process=4,
                  user_modules=(),
                  max_events_per_dataset=-1,
@@ -42,11 +44,12 @@ class AtNanoAOD(object):
                  profile=False, profile_out_path=None
     ):
         self.parallel = alphatwirl.parallel.build_parallel(
-            parallel_mode=parallel_mode,
-            quiet=quiet,
-            processes=process,
-            user_modules=user_modules,
-            htcondor_job_desc_extra=htcondor_job_desc_extra
+           parallel_mode=parallel_mode,
+           quiet=quiet,
+           processes=process,
+           user_modules=user_modules,
+           ## htcondor_job_desc_extra=htcondor_job_desc_extra,
+           dispatcher_options=dispatcher_options
         )
         self.outdir = outdir
         self.force =  force
@@ -92,7 +95,7 @@ class AtNanoAOD(object):
             maxFiles=self.max_files_per_dataset,
             maxFilesPerRun=self.max_files_per_process
         )
-        eventReader = alphatwirl.loop.EventsInDatasetReader(
+        eventReader = alphatwirl.loop.EventDatasetReader(
             eventLoopRunner=eventLoopRunner,
             reader=reader_top,
             collector=collector_top,
